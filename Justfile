@@ -95,3 +95,8 @@ clean-all:
     rm -rf artifacts cache
     forge clean
     rm -rf node_modules
+
+# leader board
+leaderboard SOURCE:
+    echo "Get LeaderBoard..."
+    node scripts/check-leaderboard.js {{SOURCE}}

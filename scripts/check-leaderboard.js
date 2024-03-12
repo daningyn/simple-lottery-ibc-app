@@ -27,24 +27,14 @@ async function main() {
   const channelId = sendConfig[`${networkName}`]["channelId"];
   const channelIdBytes = hre.ethers.encodeBytes32String(channelId);
   const timeoutSeconds = sendConfig[`${networkName}`]["timeout"];
-  // Send the packet
-  await ibcApp.connect(accounts[0]).sendUniversalPacket(
-    destPortAddr,
-    channelIdBytes,
-    timeoutSeconds
-    // Define and pass optionalArgs appropriately or remove if not needed
-  );
-  // Send the packet
 
-  const result = await ibcApp.getLeaderBoards();
-  console.log(`Leader Board: ${result}`);
-
-  // const result1 = await ibcApp.getTopAddresses(
+  // // Send the packet
+  // const result = await ibcApp.connect(accounts[0]).getTopAddresses(
   //   10,
   //   1710310202
   //   // Define and pass optionalArgs appropriately or remove if not needed
   // );
-  // console.log(`Leader Board1: ${result1}`);
+  // console.log(`Leader Board: ${result}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
