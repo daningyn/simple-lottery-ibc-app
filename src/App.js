@@ -1,6 +1,39 @@
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
+import io from 'socket.io-client';
+const socket = io.connect("http://localhost:4001");
+
 function App() {
+
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [duration, setDuration] = useState('N/A');
+
+  useEffect(() => {
+    const onConnect = () => {
+      console.log('connected');
+      setIsConnected(true);
+    }
+
+    const onDisconnect = () => {
+      setIsConnected(false);
+    }
+
+    const onDuration = (data) => {
+      setDuration(data);
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('duration-countdown', onDuration);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      socket.off('duration-countdown', onDuration);
+    };
+  }, []);
+
   return (
     <div className="App flex gap-x-[20px] w-[100%] items-center justify-around">
       <div className='Form flex flex-col w-[40%] gap-y-[30px] p-[20px] border-[1px] border-solid border-slate-500 rounded-xl'>
@@ -27,9 +60,12 @@ function App() {
         </button>
       </div>
       <div className='LeaderBoard flex flex-col w-[40%] gap-y-[20px]'>
-        <div className='Notification'>
+        <div className='Notification flex flex-col gap-y-[10px]'>
           <label className='Time'>
-            Next announcement is in: 2:59
+            <span className='font-bold'>Next announcement is in: </span>{duration}
+          </label>
+          <label className='AnnouncementDirection'>
+            <span className='font-bold'>Current Direction is: </span>{duration}
           </label>
         </div>
         <div className='LeaderBoardTable flex flex-col gap-y-[10px]'>
