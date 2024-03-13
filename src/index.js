@@ -12,6 +12,42 @@ import {
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '@rainbow-me/rainbowkit/styles.css';
+import {
+  getDefaultConfig,
+  RainbowKitProvider
+} from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
+import {
+  QueryClientProvider,
+  QueryClient,
+} from "@tanstack/react-query";
+const queryClient = new QueryClient();
+
+const BASESepoliaTestnet = {
+  id: 84532,
+  name: 'BASE Sepolia',
+  nativeCurrency: { name: 'Base', symbol: 'BASE', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://rpc.notadegen.com/base/sepolia'] },
+  }
+}
+
+const OPSepoliaTestnet = {
+  id: 11155420,
+  name: 'Optimism Sepolia',
+  nativeCurrency: { name: 'Optimism', symbol: 'OP', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://optimism-sepolia.blockpi.network/v1/rpc/public'] },
+  }
+}
+
+const config = getDefaultConfig({
+  appName: 'My App',
+  projectId: 'fba08911e2aad64000d0adf60fc08652',
+  chains: [BASESepoliaTestnet, OPSepoliaTestnet],
+  ssr: false, // If your dApp uses server side rendering (SSR)
+});
 
 const axiosConfig = () => {
   axios.defaults.baseURL = 'http://localhost:4001';
@@ -25,18 +61,24 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <>
-        <ToastContainer
-          position='top-right'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          draggable
-          pauseOnHover
-          theme='light'
-        />
-        <Outlet />
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider>
+              <ToastContainer
+                position='top-right'
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                draggable
+                pauseOnHover
+                theme='light'
+              />
+              <Outlet />
+            </RainbowKitProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
       </>
     ),
     children: [
