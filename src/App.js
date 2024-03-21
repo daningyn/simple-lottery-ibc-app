@@ -41,6 +41,7 @@ function App() {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [duration, setDuration] = useState('N/A');
+  const [direction, setDirection] = useState('N/A');
   const { address } = useAccount()
   const [from, setFrom] = useState('NONE');
   const [to, setTo] = useState('NONE');
@@ -64,14 +65,22 @@ function App() {
       setDuration(data);
     }
 
+    const onDirection = (data) => {
+      const d = data.split('-').join(' to ');
+      toast.success('Next Challenge live!');
+      setDirection(d)
+    }
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('duration-countdown', onDuration);
+    socket.on('direction-ping', onDirection);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('duration-countdown', onDuration);
+      socket.off('direction-ping', onDirection);
     };
   }, []);
 
@@ -107,8 +116,12 @@ function App() {
                onChange={(event) => {setFrom(event.target.value)}} value={from}
             >
               <option value='None'>Select from chain</option>
+              <option value='SOLANA'>SOLANA</option>
+              <option value='ETHERIUM'>ETH</option>
               <option value='OPTIMISM'>OP</option>
               <option value='BASE'>BASE</option>
+              <option value='POLYCHAIN'>POLYCHAIN</option>
+              <option value='AVAX'>AVAX</option>
             </select>
           </div>
           <div className='From flex flex-col w-[40%] gap-y-[20px]'>
@@ -117,7 +130,11 @@ function App() {
               onChange={(event) => {setTo(event.target.value)}} value={to}
             >
               <option value='None'>Select target chain</option>
+              <option value='POLYCHAIN'>POLYCHAIN</option>
               <option value='OPTIMISM'>OP</option>
+              <option value='SOLANA'>SOLANA</option>
+              <option value='ETHERIUM'>ETH</option>
+              <option value='AVAX'>AVAX</option>
               <option value='BASE'>BASE</option>
             </select>
           </div>
@@ -141,10 +158,10 @@ function App() {
             <span className='font-bold'>Next announcement is in: </span>{duration}
           </label>
           <label className='AnnouncementDirection'>
-            <span className='font-bold'>Current Direction is: </span>{duration}
+            <span className='font-bold'>Current Direction is: </span>{direction}
           </label>
         </div>
-        <div className='LeaderBoardTable flex flex-col gap-y-[10px]'>
+        {/* <div className='LeaderBoardTable flex flex-col gap-y-[10px]'>
           <label className='Title font-bold text-4xl'>
             LeaderBoard
           </label>
@@ -170,7 +187,7 @@ function App() {
               <div className='Right w-[120px] flex justify-center'>3</div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
